@@ -80,7 +80,7 @@ export class GeneratedDocumentContentProvider implements TextDocumentContentProv
         let documentText = problemDocument.getText();
 
         try {
-            let preProcessedProblemText =  await test.getPreProcessor()?.transform(documentText, dirname(test.getManifest().path), this.outputWindow) || "No pre-processor configured.";
+            let preProcessedProblemText =  await test.getPreProcessor()?.transform(documentText, dirname(test.getManifest().path), this.outputWindow) ?? "No pre-processor configured.";
             // force parsing of the generated problem
             this.pddlWorkspace.pddlWorkspace.upsertFile(uri.toString(), PddlLanguage.PDDL, 0, preProcessedProblemText, new SimpleDocumentPositionResolver(preProcessedProblemText), true);
             return preProcessedProblemText;

@@ -3,19 +3,20 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 'use strict';
-import { HoverProvider, TextDocument, Position, CancellationToken, Hover, MarkdownString, ExtensionContext, window, TextEditor, Range, TextEditorDecorationType, Location } from 'vscode';
+import { HoverProvider, TextDocument, Position, CancellationToken, Hover, MarkdownString, ExtensionContext, window, TextEditor, Range, TextEditorDecorationType, Location, CallHierarchyProvider, CallHierarchyItem, SymbolKind, ProviderResult, CallHierarchyIncomingCall, CallHierarchyOutgoingCall, workspace } from 'vscode';
 import { SymbolUtils, VariableInfo, SymbolInfo } from './SymbolUtils';
 import { CodePddlWorkspace } from '../workspace/CodePddlWorkspace';
 import { ModelHierarchy, VariableReferenceInfo, VariableReferenceKind, VariableEffectReferenceInfo } from '../../../common/src/ModelHierarchy';
 import { PDDL } from '../../../common/src/parser';
-import { DomainInfo } from '../../../common/src/DomainInfo';
+import { DomainInfo, PddlDomainConstruct } from '../../../common/src/DomainInfo';
 import { Variable } from '../../../common/src/FileInfo';
-import { toPosition } from '../utils';
+import { toPosition, toRange, nodeToRange } from '../utils';
 import { isPddl } from '../workspace/workspaceUtils';
 import { IncreaseEffect, AssignEffect, DecreaseEffect, MakeTrueEffect, MakeFalseEffect, ScaleDownEffect, ScaleUpEffect } from '../../../common/src/ActionEffectParser';
 import { PddlWorkspace } from '../../../common/src/PddlWorkspace';
+import { Util } from '../../../common/src/util';
 
-export class ModelHierarchyProvider implements HoverProvider {
+export class ModelHierarchyProvider implements HoverProvider, CallHierarchyProvider {
     private symbolUtils: SymbolUtils;
     private dirtyEditors = new Set<TextEditor>();
     private timeout: NodeJS.Timer | undefined = undefined;
@@ -34,7 +35,87 @@ export class ModelHierarchyProvider implements HoverProvider {
         window.visibleTextEditors.forEach(editor => this.scheduleDecoration(editor));
     }
 
-    scheduleDecoration(editor: TextEditor): void {
+    async prepareCallHierarchy(document: TextDocument, position: Position, token: CancellationToken): Promise<CallHierarchyItem | undefined> {
+        if (token.isCancellationRequested) { return undefined; }
+        await this.symbolUtils.assertFileParsed(document);
+
+        let symbolInfo = this.symbolUtils.getSymbolInfo(document, position);
+
+        if (symbolInfo instanceof VariableInfo) {
+            return new VariableCallHierarchyItem(<VariableInfo>symbolInfo, document);
+        } else {
+            return undefined;
+        }
+    }
+
+    async provideCallHierarchyIncomingCalls(item: CallHierarchyItem, token: CancellationToken): Promise<CallHierarchyIncomingCall[] | undefined> {
+        if (token.isCancellationRequested) { return undefined; }
+        let document = await workspace.openTextDocument(item.uri);
+        let fileInfo = this.pddlWorkspace.getFileInfoByUri(item.uri);
+
+        if (!fileInfo) {
+            console.log(`File not found in the workspace: ${item.uri}`);
+            return undefined;
+        }
+
+        if (!fileInfo.isDomain()) {
+            console.log(`File is not a PDDL domain: ${fileInfo.fileUri}`);
+            return undefined;
+        }
+
+        let domainInfo = <DomainInfo>fileInfo;
+
+        if (item instanceof VariableCallHierarchyItem) {
+            let variableItem = <VariableCallHierarchyItem>item;
+            let references = this.symbolUtils.findSymbolReferences(document, variableItem.variableInfo, false);
+            let pddlFileInfo = this.pddlWorkspace.getFileInfo(document);
+            if (!pddlFileInfo) { return undefined; }
+
+            if (references !== undefined && domainInfo !== undefined) {
+                let referenceInfos = this.getReferences(references, domainInfo, variableItem.variableInfo, document);
+
+                /*
+                let readReferences = referenceInfos
+                    .filter(ri => [VariableReferenceKind.READ, VariableReferenceKind.READ_OR_WRITE].includes(ri.kind));
+
+                const writeReferences = referenceInfos
+                    .filter(ri => [VariableReferenceKind.WRITE, VariableReferenceKind.READ_OR_WRITE].includes(ri.kind));
+                const writeEffectReferences = writeReferences
+                    .filter(ri => (ri instanceof VariableEffectReferenceInfo))
+                    .map(ri => <VariableEffectReferenceInfo>ri);
+
+                let increaseReferences = writeEffectReferences.filter(ri => ri.effect instanceof IncreaseEffect);
+                let decreaseReferences = writeEffectReferences.filter(ri => ri.effect instanceof DecreaseEffect);
+                let scaleUpReferences = writeEffectReferences.filter(ri => ri.effect instanceof ScaleUpEffect);
+                let scaleDownReferences = writeEffectReferences.filter(ri => ri.effect instanceof ScaleDownEffect);
+                let assignReferences = writeEffectReferences.filter(ri => ri.effect instanceof AssignEffect);
+                let makeTrueReferences = writeEffectReferences.filter(ri => ri.effect instanceof MakeTrueEffect);
+                let makeFalseReferences = writeEffectReferences.filter(ri => ri.effect instanceof MakeFalseEffect);
+*/
+                let referenceByStructure = Util.groupBy(referenceInfos, vri => vri.structure);
+
+                return [...referenceByStructure.keys()]
+                    .map(structure => this.createVariableIncomingCall(document, structure, referenceByStructure.get(structure)!));
+            }
+        } else if (item instanceof StructureCallHierarchyItem) {
+            // let structure = (<StructureCallHierarchyItem>item).structure;
+            return undefined;
+        }
+
+        return undefined;
+    }
+
+    private createVariableIncomingCall(document: TextDocument, structure: PddlDomainConstruct, references: VariableReferenceInfo[]): CallHierarchyIncomingCall {
+        let structureItem = new StructureCallHierarchyItem(structure, document);
+        let referenceRanges = references.map(ref => nodeToRange(document, ref.node));
+        return new CallHierarchyIncomingCall(structureItem, referenceRanges);
+    }
+
+    provideCallHierarchyOutgoingCalls(_item: CallHierarchyItem, _token: CancellationToken): ProviderResult<CallHierarchyOutgoingCall[]> {
+        throw new Error("Method not implemented.");
+    }
+
+    scheduleDecoration(editor?: TextEditor): void {
         if (editor && editor.visibleRanges.length && isPddl(editor.document)) {
 
             this.triggerDecorationRefresh(editor);
@@ -205,7 +286,7 @@ export class ModelHierarchyProvider implements HoverProvider {
     }
 
 
-    private getReferences(references: Location[], domainInfo: DomainInfo, symbolInfo: SymbolInfo, document: TextDocument) {
+    private getReferences(references: Location[], domainInfo: DomainInfo, symbolInfo: SymbolInfo, document: TextDocument): VariableReferenceInfo[] {
         return references
             .filter(r => r.uri.toString() === domainInfo.fileUri) // limit this to the domain file only
             .map(r => new ModelHierarchy(domainInfo!).getReferenceInfo((<VariableInfo>symbolInfo).variable, document.offsetAt(r.range.start) + 1));
@@ -235,6 +316,27 @@ export class ModelHierarchyProvider implements HoverProvider {
     }
 
     private createAccessKindDocumentation(referenceInfos: VariableReferenceInfo[], documentation: MarkdownString): void {
-        referenceInfos.forEach(ri => documentation.appendMarkdown(`\n- \`${ri.structure.getNameOrEmpty()}\` ${ri.getTimeQualifier()} ${ri.part}`).appendCodeblock(ri.relevantCode, PDDL));
+        referenceInfos.forEach(ri => documentation.appendMarkdown(`\n- \`${ri.structure.getNameOrEmpty()}\` ${ri.getTimeQualifier()} ${ri.part}`).appendCodeblock(ri.relevantCode ?? '', PDDL));
+    }
+}
+
+class VariableCallHierarchyItem extends CallHierarchyItem {
+
+    /**
+     * Creates a new predicate/function call hierarchy item.
+     */
+    constructor(public readonly variableInfo: VariableInfo, document: TextDocument) {
+        super(SymbolKind.Function,
+            `(${variableInfo.variable.getFullName()})`,
+            variableInfo.hover.contents.join(''),
+            document.uri,
+            variableInfo.location.range,
+            variableInfo.location.range);
+    }
+}
+
+class StructureCallHierarchyItem extends CallHierarchyItem {
+    constructor(public readonly structure: PddlDomainConstruct, document: TextDocument) {
+        super(SymbolKind.Method, structure.getNameOrEmpty(), structure.getDocumentation().join(), document.uri, toRange(structure.getLocation()), toRange(structure.getLocation()));
     }
 }

@@ -66,6 +66,7 @@ export async function activate(context: ExtensionContext) {
 	}
 	catch (ex) {
 		// sadly, the next line never gets triggered, even if the activateWithTelemetry fails
+		console.error("Error during PDDL extension activation: " + (ex.message ?? ex));
 		window.showErrorMessage("There was an error starting the PDDL extension: " + ex.message);
 	}
 }
@@ -190,6 +191,7 @@ function activateWithTelemetry(_operationId: string, context: ExtensionContext) 
 	
 	let modelHierarchyProvider = new ModelHierarchyProvider(context, codePddlWorkspace);
 	context.subscriptions.push(languages.registerHoverProvider(PDDL, modelHierarchyProvider));
+	context.subscriptions.push(languages.registerCallHierarchyProvider(PDDL, modelHierarchyProvider));
 
 	let symbolInfoProvider = new SymbolInfoProvider(codePddlWorkspace);
 

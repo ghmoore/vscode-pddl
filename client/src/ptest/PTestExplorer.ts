@@ -291,7 +291,7 @@ export class PTestExplorer {
 
                 if (result.outcome === PlanningOutcome.FAILURE) {
                     this.outputTestResult(test, TestOutcome.FAILED, result.elapsedTime, result.error);
-                    reject(new Error(result.error || "Unknown error while planning."));
+                    reject(new Error(result.error ?? "Unknown error while planning."));
                     return;
                 } else if (result.outcome === PlanningOutcome.KILLED) {
                     this.outputTestResult(test, TestOutcome.SKIPPED, result.elapsedTime, 'Killed by the user.');
@@ -308,7 +308,7 @@ export class PTestExplorer {
                         this.assertMatchesAnExpectedPlan(result, test);
                     }
                     catch (err) {
-                        this.outputTestResult(test, TestOutcome.FAILED, result.elapsedTime, "Failed to compare plan to expected plans. Error: " + err.message || err);
+                        this.outputTestResult(test, TestOutcome.FAILED, result.elapsedTime, "Failed to compare plan to expected plans. Error: " + err.message ?? err);
                     }
                 }
                 else {

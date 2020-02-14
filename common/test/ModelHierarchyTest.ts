@@ -33,7 +33,7 @@ describe('ModelHierarchy', () => {
             let actual = new ModelHierarchy(domainInfo).getReferenceInfo(p, pddlText.lastIndexOf('(p)') + 1);
 
             // THEN
-            assert.strictEqual(actual.structure?.getNameOrEmpty(), "a1", "action name");
+            assert.strictEqual(actual.structure.getNameOrEmpty(), "a1", "action name");
             assert.strictEqual(actual.getTimeQualifier(), "", "action time qualifier");
             assert.strictEqual(actual.kind, VariableReferenceKind.READ, "read/write kind");
             assert.strictEqual(actual.part, "condition", "part");
@@ -62,7 +62,7 @@ describe('ModelHierarchy', () => {
             let actual = new ModelHierarchy(domainInfo).getReferenceInfo(p, pddlText.lastIndexOf('(p)') + 1);
 
             // THEN
-            assert.strictEqual(actual.structure?.getNameOrEmpty(), "a1", "action name");
+            assert.strictEqual(actual.structure.getNameOrEmpty(), "a1", "action name");
             assert.strictEqual(actual.getTimeQualifier(), "", "action time qualifier");
             assert.strictEqual(actual.kind, VariableReferenceKind.WRITE, "read/write kind");
             assert.strictEqual(actual.part, "effect", "part");
@@ -91,7 +91,7 @@ describe('ModelHierarchy', () => {
             let actual = new ModelHierarchy(domainInfo).getReferenceInfo(p, pddlText.lastIndexOf('(p)') + 1);
 
             // THEN
-            assert.strictEqual(actual.structure?.getNameOrEmpty(), "a1", "action name");
+            assert.strictEqual(actual.structure.getNameOrEmpty(), "a1", "action name");
             assert.strictEqual(actual.getTimeQualifier(), "", "action time qualifier");
             assert.strictEqual(actual.kind, VariableReferenceKind.READ, "read/write kind");
             assert.strictEqual(actual.part, "condition", "part");
@@ -120,7 +120,7 @@ describe('ModelHierarchy', () => {
             let actual = new ModelHierarchy(domainInfo).getReferenceInfo(p, pddlText.lastIndexOf('(p)') + 1);
 
             // THEN
-            assert.strictEqual(actual.structure?.getNameOrEmpty(), "a1", "action name");
+            assert.strictEqual(actual.structure.getNameOrEmpty(), "a1", "action name");
             assert.strictEqual(actual.getTimeQualifier(), "", "action time qualifier");
             assert.strictEqual(actual.kind, VariableReferenceKind.WRITE, "read/write kind");
             assert.strictEqual(actual.part, "effect", "part");
@@ -149,7 +149,7 @@ describe('ModelHierarchy', () => {
             let actual = new ModelHierarchy(domainInfo).getReferenceInfo(f, pddlText.lastIndexOf('(f)') + 1);
 
             // THEN
-            assert.strictEqual(actual.structure?.getNameOrEmpty(), "a1", "action name");
+            assert.strictEqual(actual.structure.getNameOrEmpty(), "a1", "action name");
             assert.strictEqual(actual.getTimeQualifier(), "", "action time qualifier");
             assert.strictEqual(actual.kind, VariableReferenceKind.READ, "read/write kind");
             assert.strictEqual(actual.part, "condition", "part");
@@ -178,7 +178,7 @@ describe('ModelHierarchy', () => {
             let actual = new ModelHierarchy(domainInfo).getReferenceInfo(f, pddlText.lastIndexOf('(f)') + 1);
 
             // THEN
-            assert.strictEqual(actual.structure?.getNameOrEmpty(), "a1", "action name");
+            assert.strictEqual(actual.structure.getNameOrEmpty(), "a1", "action name");
             assert.strictEqual(actual.getTimeQualifier(), "", "action time qualifier");
             assert.strictEqual(actual.kind, VariableReferenceKind.WRITE, "read/write kind");
             assert.strictEqual(actual.part, "effect", "part");
@@ -208,7 +208,7 @@ describe('ModelHierarchy', () => {
             let actual = new ModelHierarchy(domainInfo).getReferenceInfo(f, pddlText.lastIndexOf('(f)') + 1);
 
             // THEN
-            assert.strictEqual(actual.structure?.getNameOrEmpty(), "a1", "action name");
+            assert.strictEqual(actual.structure.getNameOrEmpty(), "a1", "action name");
             assert.strictEqual(actual.getTimeQualifier(), "at start", "action time qualifier");
             assert.strictEqual(actual.kind, VariableReferenceKind.READ, "read/write kind");
             assert.strictEqual(actual.part, "condition", "part");
@@ -237,7 +237,7 @@ describe('ModelHierarchy', () => {
             let actual = new ModelHierarchy(domainInfo).getReferenceInfo(f, pddlText.lastIndexOf('(f)') + 1);
 
             // THEN
-            assert.strictEqual(actual.structure?.getNameOrEmpty(), "a1", "action name");
+            assert.strictEqual(actual.structure.getNameOrEmpty(), "a1", "action name");
             assert.strictEqual(actual.getTimeQualifier(), "", "action time qualifier");
             assert.strictEqual(actual.kind, VariableReferenceKind.WRITE, "read/write kind");
             assert.strictEqual(actual.part, "effect", "part");
@@ -266,7 +266,7 @@ describe('ModelHierarchy', () => {
             let actual = new ModelHierarchy(domainInfo).getReferenceInfo(f, pddlText.lastIndexOf('(f)') + 1);
 
             // THEN
-            assert.strictEqual(actual.structure?.getNameOrEmpty(), "a1", "action name");
+            assert.strictEqual(actual.structure.getNameOrEmpty(), "a1", "action name");
             assert.strictEqual(actual.getTimeQualifier(), "", "action time qualifier");
             assert.strictEqual(actual.kind, VariableReferenceKind.READ, "read/write kind");
             assert.strictEqual(actual.part, "duration", "part");
@@ -298,7 +298,7 @@ describe('ModelHierarchy', () => {
             let actual = new ModelHierarchy(domainInfo).getReferenceInfo(g, pddlText.lastIndexOf('(g)') + 1);
 
             // THEN
-            assert.strictEqual(actual.structure?.getNameOrEmpty(), "a1", "action name");
+            assert.strictEqual(actual.structure.getNameOrEmpty(), "a1", "action name");
             assert.strictEqual(actual.getTimeQualifier(), "at end", "action time qualifier");
             assert.strictEqual(actual.kind, VariableReferenceKind.READ, "read/write kind");
             assert.strictEqual(actual.part, "effect", "part");
@@ -327,7 +327,7 @@ describe('ModelHierarchy', () => {
             let actual = new ModelHierarchy(domainInfo).getReferenceInfo(p, pddlText.lastIndexOf('(p)') + 1);
 
             // THEN
-            assert.strictEqual(actual.structure?.getNameOrEmpty(), "e1", "event name");
+            assert.strictEqual(actual.structure.getNameOrEmpty(), "e1", "event name");
             assert.strictEqual(actual.getTimeQualifier(), "", "time qualifier");
             assert.strictEqual(actual.kind, VariableReferenceKind.READ, "read/write kind");
             assert.strictEqual(actual.part, "condition", "part");
@@ -356,11 +356,40 @@ describe('ModelHierarchy', () => {
             let actual = new ModelHierarchy(domainInfo).getReferenceInfo(f, pddlText.lastIndexOf('(f)') + 1);
 
             // THEN
-            assert.strictEqual(actual.structure?.getNameOrEmpty(), "p1", "process name");
+            assert.strictEqual(actual.structure.getNameOrEmpty(), "p1", "process name");
             assert.strictEqual(actual.getTimeQualifier(), "", "time qualifier");
             assert.strictEqual(actual.kind, VariableReferenceKind.WRITE, "read/write kind");
             assert.strictEqual(actual.part, "effect", "part");
             assert.strictEqual(actual.relevantCode, "(increase (f) (* #t 3.14))", "relevant code");
+        });
+
+        it('should get predicate used in constraint', () => {
+            // GIVEN
+            let pddlText = `(define (domain d)
+
+            (:predicates (p))
+            
+            (:constraints (and
+                (sometime (p))
+            ))
+            )`;
+            
+            let domainInfo = createPddlDomainParser(pddlText).getDomain();
+            
+            if (!domainInfo) { assert.fail("could not parse test PDDL"); }
+
+            const p = domainInfo?.getPredicates()[0];
+
+            // WHEN
+            let actual = new ModelHierarchy(domainInfo).getReferenceInfo(p, pddlText.lastIndexOf('(p)') + 1);
+
+            // THEN
+            assert.ok(actual);
+            // assert.strictEqual(actual.structure.getNameOrEmpty(), "e1", "event name");
+            // assert.strictEqual(actual.getTimeQualifier(), "", "time qualifier");
+            // assert.strictEqual(actual.kind, VariableReferenceKind.READ, "read/write kind");
+            // assert.strictEqual(actual.part, "condition", "part");
+            // assert.strictEqual(actual.relevantCode, "(p)", "relevant code");
         });
 
     });

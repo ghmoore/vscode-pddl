@@ -51,8 +51,8 @@ export class PddlProblemParser {
                 problemInfo.addProblems([new ParsingProblem(parsingError.message, parsingError.line, parsingError.column)]);
             }
             else {
-                let line = positionResolver.resolveToPosition(preProcessor?.metaDataLineOffset || 0).line;
-                problemInfo.addProblems([new ParsingProblem(ex.message || ex, line, 0)]);
+                let line = positionResolver.resolveToPosition(preProcessor?.metaDataLineOffset ?? 0).line;
+                problemInfo.addProblems([new ParsingProblem(ex.message ?? ex, line, 0)]);
             }
             if (preProcessor) { problemInfo.setPreParsingPreProcessor(preProcessor); }
             return problemInfo;
@@ -163,7 +163,7 @@ export class PddlProblemParser {
             return undefined;
         }
         else if (node.getToken().tokenText === '(not') {
-            let nested = node.getFirstChild(PddlTokenType.OpenBracket, /.*/) || node.getFirstChild(PddlTokenType.OpenBracketOperator, /.*/);
+            let nested = node.getFirstChild(PddlTokenType.OpenBracket, /.*/) ?? node.getFirstChild(PddlTokenType.OpenBracketOperator, /.*/);
             if (!nested) {
                 return undefined;
             }
