@@ -281,7 +281,7 @@ export class ModelHierarchyProvider implements HoverProvider, CallHierarchyProvi
             }
 
         } else {
-            throw new Error("Method not implemented.");
+            return undefined;
         }
     }
 

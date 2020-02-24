@@ -58,7 +58,7 @@ export class GeneratedDocumentContentProvider implements TextDocumentContentProv
         let problemTemplateWithoutExtension = problemTemplatePath.replace('.pddl', '');
 
         if (test.getLabel()) {
-            problemPath = join(problemTemplateWithoutExtension + ` (${test.getLabel()}).pddl`);
+            problemPath = join(problemTemplateWithoutExtension + ` (${this.sanitizePath(test.getLabel())}).pddl`);
         }
         else {
             problemPath = problemTemplateWithoutExtension + ` (${testIdx}).pddl`;
@@ -69,6 +69,10 @@ export class GeneratedDocumentContentProvider implements TextDocumentContentProv
         this.uriMap.set(uri.toString(), test);
 
         return uri;
+    }
+
+    sanitizePath(path: string): string {
+        return path.split(/[\\\/]/).join('_');
     }
 
     async provideTextDocumentContent(uri: Uri, token: CancellationToken): Promise<string> {
@@ -85,7 +89,7 @@ export class GeneratedDocumentContentProvider implements TextDocumentContentProv
             this.pddlWorkspace.pddlWorkspace.upsertFile(uri.toString(), PddlLanguage.PDDL, 0, preProcessedProblemText, new SimpleDocumentPositionResolver(preProcessedProblemText), true);
             return preProcessedProblemText;
         } catch (ex) {
-            return `Problem file '${basename(uri.fsPath)}' failed to generate: ${ex.message}`;
+            return `;;Problem file '${basename(uri.fsPath)}' failed to generate: ${ex.message}\n\n` + documentText;
         }
     }
 }
