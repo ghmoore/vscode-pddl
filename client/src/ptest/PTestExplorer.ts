@@ -15,7 +15,7 @@ import { Test, TestOutcome } from './Test';
 import { PTestTreeDataProvider, PTestNode, PTestNodeKind } from './PTestTreeDataProvider';
 import { GeneratedDocumentContentProvider } from './GeneratedDocumentContentProvider';
 import { Planning } from '../planning/planning';
-import { PlanningOutcome } from '../planning/PlanningResult';
+import { PlanningOutcome, PlanningResult } from '../planning/PlanningResult';
 import { Plan } from '../../../common/src/Plan';
 import { PddlPlanParser } from '../../../common/src/PddlPlanParser';
 import { TestsManifest } from './TestsManifest';
@@ -328,7 +328,7 @@ export class PTestExplorer {
         });
     }
 
-    private assertMatchesAnExpectedPlan(result: import("c:/NotBackedUp/c/GitHub/vscode-pddl/client/src/planning/PlanningResult").PlanningResult, test: Test) {
+    private assertMatchesAnExpectedPlan(result: PlanningResult, test: Test) {
         let success = result.plans.every(plan => test.getExpectedPlans()
             .map(expectedPlanFileName => test.toAbsolutePath(expectedPlanFileName))
             .some(expectedPlanPath => this.areSame(plan, this.loadPlan(expectedPlanPath))));
