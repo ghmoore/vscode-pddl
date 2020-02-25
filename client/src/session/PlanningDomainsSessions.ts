@@ -158,7 +158,7 @@ export class PlanningDomainsSessions {
         }
 
         if (!sessionId) {
-            sessionId = (await window.showInputBox({ prompt: 'Paste Planning.Domains session hash', placeHolder: 'hash e.g. XOacXgN1V7', value: 'XOacXgN1V7' })) ?? '';
+            sessionId = (await window.showInputBox({ prompt: 'Paste Planning.Domains session hash', placeHolder: 'hash e.g. XOacXgN1V7' })) ?? '';
         }
 
         let mode: SessionMode = (await checkSession(sessionId))[0];
@@ -433,7 +433,7 @@ Open session in Visual Studio Code: ${this.createVSCodeUri(session, readWrite)}`
 
         let studentNameInput = await window.showInputBox({
             ignoreFocusOut: true, prompt: 'List the student names/emails',
-            placeHolder: 'Example: Student1; student2@domain.com; Student Three <student3@domain.com>',
+            placeHolder: 'Example: John Doe; student1@domain.com; Alice von Wunderland <alice@wunderland-blah-blah.com>',
             validateInput: input => studentNameParser.validateClassroomNames(input)
         });
 
