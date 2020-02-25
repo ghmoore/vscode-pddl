@@ -1,5 +1,14 @@
 # PDDL support - What's new?
 
+## [2.15.4] Upgrades and CI
+
+- Planning Domain Session generation email sending is repaired. VS Code changed behavior of the `env.openExternal(Uri)` API and prevented it from opening `mailto:` URLs.
+- Updated to Typescript 3.7.3
+  - Bulk replaced Typescript `||` with `??` operator where appropriate (i.e. when returning default numeric or more generally non-boolean values).
+  - Simplified code by optional chaining using the `.?` Elvis operator.
+- More Typescript strict semantic checking clean-up
+- GitHub Actions used for CI
+
 ## [2.15.3] Bug fixes
 
 - Fixed generated problem file/tab name for the pre-parse preview
@@ -876,7 +885,8 @@ Note for open source contributors: all notable changes to the "pddl" extension w
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
-[Unreleased]: https://github.com/jan-dolejsi/vscode-pddl/compare/v2.15.3...HEAD
+[Unreleased]: https://github.com/jan-dolejsi/vscode-pddl/compare/v2.15.4...HEAD
+[2.15.4]:https://github.com/jan-dolejsi/vscode-pddl/compare/v2.15.3...v2.15.4
 [2.15.3]:https://github.com/jan-dolejsi/vscode-pddl/compare/v2.15.2...v2.15.3
 [2.15.2]:https://github.com/jan-dolejsi/vscode-pddl/compare/v2.15.1...v2.15.2
 [2.15.1]:https://github.com/jan-dolejsi/vscode-pddl/compare/v2.15.0...v2.15.1

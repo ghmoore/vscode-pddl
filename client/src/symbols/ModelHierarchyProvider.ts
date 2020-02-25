@@ -115,7 +115,7 @@ export class ModelHierarchyProvider implements HoverProvider, CallHierarchyProvi
         throw new Error("Method not implemented.");
     }
 
-    scheduleDecoration(editor?: TextEditor): void {
+    scheduleDecoration(editor: TextEditor | undefined): void {
         if (editor && editor.visibleRanges.length && isPddl(editor.document)) {
 
             this.triggerDecorationRefresh(editor);

@@ -7,6 +7,7 @@
 import * as assert from 'assert';
 import { ModelHierarchy, VariableReferenceKind } from '../src/ModelHierarchy';
 import { createPddlDomainParser } from './PddlDomainParserTest';
+import { UnrecognizedStructure } from '../src/DomainInfo';
 
 describe('ModelHierarchy', () => {
 
@@ -385,11 +386,11 @@ describe('ModelHierarchy', () => {
 
             // THEN
             assert.ok(actual);
-            // assert.strictEqual(actual.structure.getNameOrEmpty(), "e1", "event name");
-            // assert.strictEqual(actual.getTimeQualifier(), "", "time qualifier");
-            // assert.strictEqual(actual.kind, VariableReferenceKind.READ, "read/write kind");
-            // assert.strictEqual(actual.part, "condition", "part");
-            // assert.strictEqual(actual.relevantCode, "(p)", "relevant code");
+            assert.ok(actual.structure instanceof UnrecognizedStructure, "enclosing structure type should be UnrecognizedStructure");
+            assert.strictEqual(actual.getTimeQualifier(), "", "time qualifier");
+            assert.strictEqual(actual.kind, VariableReferenceKind.UNRECOGNIZED, "read/write kind"); // this should eventually by a READ
+            assert.strictEqual(actual.part, "", "part");
+            assert.strictEqual(actual.relevantCode, undefined, "relevant code"); // should be (sometime (p))
         });
 
     });
